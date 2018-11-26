@@ -14,7 +14,7 @@ pub trait Mask {
   fn size(&self)          -> &Size;
   fn origin(&self)        -> &Origin;
 
-  fn rectangle(&self) -> ::ggez::graphics::Rect {
+  fn as_rect(&self) -> ::ggez::graphics::Rect {
     let top_left: Point = self.top_left();
     let size:     &Size = self.size();
     return [
