@@ -24,6 +24,14 @@ impl Point {
     self.y = point.y;
   }
 
+  pub fn set_x(&mut self, new: NumType) {
+    self.x = new;
+  }
+
+  pub fn set_y(&mut self, new: NumType) {
+    self.y = new;
+  }
+
   pub fn add(&mut self, point: &Point) {
     self.x += point.x;
     self.y += point.y;

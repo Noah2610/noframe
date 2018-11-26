@@ -1,10 +1,10 @@
+pub mod misc;
+
 use super::NumType;
 use super::{
   point::Point,
   size::Size
 };
-
-pub mod misc;
 
 use self::misc::{ *, Side::* };
 
