@@ -1,4 +1,7 @@
 pub use super::{
   Entity,
-  velocity::Velocity
+  traits::{
+    velocity::Velocity,
+    movement::Movement
+  }
 };

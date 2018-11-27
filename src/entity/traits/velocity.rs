@@ -1,5 +1,5 @@
 use ::geo::point::Point;
-use super::Entity;
+use super::super::Entity;
 
 pub trait Velocity: Entity {
   fn velocity(&self)         -> &Point;

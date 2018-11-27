@@ -1,6 +1,8 @@
-pub mod velocity;
+pub mod traits;
 
 pub mod prelude;
+pub use self::traits::velocity::Velocity;
+pub use self::traits::movement::Movement;
 
 use ::ggez::{
   Context,
@@ -11,7 +13,7 @@ use ::ggez::{
 use ::settings::entity::*;
 
 use ::color::Color;
-use ::geo::mask::Mask;
+use ::geo::prelude::*;
 
 pub trait Entity: Mask {
   fn color(&self) -> Color {

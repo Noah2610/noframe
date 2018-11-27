@@ -1,7 +1,7 @@
 use super::NumType;
 use super::point::Point;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Size {
   pub w: NumType,
   pub h: NumType

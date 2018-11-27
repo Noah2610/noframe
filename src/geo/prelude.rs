@@ -4,5 +4,6 @@ pub use super::{
   mask::{
     Mask,
     misc::Origin
-  }
+  },
+  rect::Rect
 };
