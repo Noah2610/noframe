@@ -29,19 +29,19 @@ pub trait Mask {
     return self.is_same(other) || (
       (
         (
-          self_sides.left > other_sides.left &&
-          self_sides.left < other_sides.right
+          self_sides.left >= other_sides.left &&
+          self_sides.left <  other_sides.right
         ) || (
-          self_sides.left  < other_sides.left &&
-          self_sides.right > other_sides.left
+          self_sides.left  <= other_sides.left &&
+          self_sides.right >  other_sides.left
         )
       ) && (
         (
-          self_sides.top > other_sides.top &&
-          self_sides.top < other_sides.bottom
+          self_sides.top >= other_sides.top &&
+          self_sides.top <  other_sides.bottom
         ) || (
-          self_sides.top    < other_sides.top &&
-          self_sides.bottom > other_sides.top
+          self_sides.top    <= other_sides.top &&
+          self_sides.bottom >  other_sides.top
         )
       )
     );

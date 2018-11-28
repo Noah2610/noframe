@@ -49,7 +49,7 @@ impl Step {
   }
 }
 
-pub enum Axis { X, Y }
+enum Axis { X, Y }
 
 impl Axis {
   fn for_each<C: FnMut(Self)>(mut iterate: C) {
