@@ -28,12 +28,12 @@ pub trait Entity: Mask {
     Ok(())
   }
 
-  fn draw_rect(&mut self, ctx: &mut Context, rect: [f32; 4]) -> GameResult<()> {
+  fn draw_rect(&self, ctx: &mut Context, rect: [f32; 4]) -> GameResult<()> {
     graphics::set_color(ctx, self.color().into())?;
     return graphics::rectangle(ctx, graphics::DrawMode::Fill, rect.into());
   }
 
-  fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
+  fn draw(&self, ctx: &mut Context) -> GameResult<()> {
     let rect = {
       let point: Point = self.top_left();
       let size:  &Size = self.size();
@@ -45,7 +45,7 @@ pub trait Entity: Mask {
     return self.draw_rect(ctx, rect);
   }
 
-  fn draw_offset(&mut self, ctx: &mut Context, offset: &Point) -> GameResult<()> {
+  fn draw_offset(&self, ctx: &mut Context, offset: &Point) -> GameResult<()> {
     let rect = {
       let point: Point = Point::combine(vec![&self.top_left(), offset]);
       let size:  &Size = self.size();

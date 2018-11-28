@@ -7,10 +7,32 @@ pub struct Point {
 }
 
 impl Point {
+  /// Returns a new `Point` with the passed `x` and `y` values.
+  /// # Example
+  ///   ```
+  ///   use noframe::geo::point::Point;
+  ///
+  ///   let point = Point::new(32.0, 64.0);
+  ///
+  ///   assert_eq!((32.0, 64.0), (point.x, point.y))
+  ///   ```
   pub fn new(x: NumType, y: NumType) -> Self {
     Self { x, y }
   }
 
+  /// Returns a new `Point` with the accumulated `x` and `y` values
+  /// of all points, passed as a `Vec<&Point>`.
+  /// # Example
+  ///   ```
+  ///   use noframe::geo::point::Point;
+  ///
+  ///   let point1 = Point::new(10.0, 2.0);
+  ///   let point2 = Point::new(11.0, 3.0);
+  ///   let point3 = Point::new(21.0, 5.0);
+  ///   let points = vec![ &point1, &point2, &point3 ];
+  ///
+  ///   assert_eq!(Point::new(42.0, 10.0), Point::combine(points));
+  ///   ```
   pub fn combine(points: Vec<&Point>) -> Point {
     let mut point_acc: Point = Point::new(0.0, 0.0);
     for point in points {
@@ -19,26 +41,77 @@ impl Point {
     return point_acc;
   }
 
+  /// Set the `x` and `y` values to the values of the passed `Point` reference.
   pub fn set(&mut self, point: &Point) {
     self.x = point.x;
     self.y = point.y;
   }
 
-  pub fn set_x(&mut self, new: NumType) {
-    self.x = new;
+  /// Set the `x` value.
+  pub fn set_x(&mut self, value: NumType) {
+    self.x = value;
   }
 
-  pub fn set_y(&mut self, new: NumType) {
-    self.y = new;
+  /// Set the `y` value.
+  pub fn set_y(&mut self, value: NumType) {
+    self.y = value;
   }
 
+  /// Add the `x` and `y` values of the passed `Point` to this `Point`.
+  /// # Example
+  ///   ```
+  ///   use noframe::geo::point::Point;
+  ///
+  ///   let mut point = Point::new(5.0, 15.0);
+  ///   let point_add = Point::new(10.0, -5.0);
+  ///   point.add(&point_add);
+  ///
+  ///   assert_eq!(Point::new(15.0, 10.0), point);
+  ///   ```
   pub fn add(&mut self, point: &Point) {
     self.x += point.x;
     self.y += point.y;
   }
 
+  /// Return the point's values as a tuple, like `(x, y)`.
+  /// # Example
+  ///   ```
+  ///   use noframe::geo::point::Point;
+  ///
+  ///   let point = Point::new(10.0, 20.0);
+  ///
+  ///   assert_eq!((10.0, 20.0), point.as_tup());
+  ///   ```
   pub fn as_tup(&self) -> (NumType, NumType) {
     (self.x, self.y)
+  }
+
+  /// Returns a new `Point` with the `x` and `y` values multiplied by `-1`.
+  /// # Example
+  ///   ```
+  ///   use noframe::geo::point::Point;
+  ///
+  ///   let point = Point::new(10.0, 20.0);
+  ///
+  ///   assert_eq!(Point::new(-10.0, -20.0), point.inverted());
+  ///   ```
+  pub fn inverted(&self) -> Point {
+    Point::new(self.x * -1.0, self.y * -1.0)
+  }
+
+  /// Multiplies the `x` and `y` values by `-1`.
+  /// # Example
+  ///   ```
+  ///   use noframe::geo::point::Point;
+  ///
+  ///   let mut point = Point::new(10.0, 20.0);
+  ///   point.invert();
+  ///
+  ///   assert_eq!(Point::new(-10.0, -20.0), point);
+  ///   ```
+  pub fn invert(&mut self) {
+    self.x *= -1.0;
+    self.y *= -1.0;
   }
 }
 
