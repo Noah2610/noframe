@@ -13,7 +13,11 @@ use ::ggez::{
 use ::settings::entity::*;
 
 use ::color::Color;
-use ::geo::prelude::*;
+use ::geo::{
+  point::Point,
+  size::Size,
+  mask::Mask
+};
 
 pub trait Entity: Mask {
   fn color(&self) -> Color {
@@ -24,9 +28,32 @@ pub trait Entity: Mask {
     Ok(())
   }
 
-  fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
+  fn draw_rect(&mut self, ctx: &mut Context, rect: [f32; 4]) -> GameResult<()> {
     graphics::set_color(ctx, self.color().into())?;
-    graphics::rectangle(ctx, graphics::DrawMode::Fill, self.as_rect())?;
-    return Ok(());
+    return graphics::rectangle(ctx, graphics::DrawMode::Fill, rect.into());
+  }
+
+  fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
+    let rect = {
+      let point: Point = self.top_left();
+      let size:  &Size = self.size();
+      [
+        point.x, point.y,
+        size.w,  size.h
+      ]
+    };
+    return self.draw_rect(ctx, rect);
+  }
+
+  fn draw_offset(&mut self, ctx: &mut Context, offset: &Point) -> GameResult<()> {
+    let rect = {
+      let point: Point = Point::combine(vec![&self.top_left(), offset]);
+      let size:  &Size = self.size();
+      [
+        point.x, point.y,
+        size.w,  size.h
+      ]
+    };
+    return self.draw_rect(ctx, rect);
   }
 }
