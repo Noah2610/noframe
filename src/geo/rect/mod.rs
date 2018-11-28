@@ -8,6 +8,7 @@ use super::{
   }
 };
 
+#[derive(Debug)]
 pub struct Rect {
   point:  Point,
   size:   Size,

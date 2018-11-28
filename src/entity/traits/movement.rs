@@ -71,7 +71,30 @@ pub trait Movement: Entity + Velocity {
     self.point_mut().add(&step.point());
   }
 
+  /// This method handles moving the Entity with its current velocity.
+  /// The method takes a closure `C`, which determines if the Entity may move to a new position;
+  /// it should return a `bool`, `true` if it may move and `false` if not.
+  /// The closure is passed a reference to a `Rect` object, which has a `Mask` with the new position.
+  ///
+  /// There is a problem with this method though:
+  /// It modifies the Entity's position (`self`) and therefor needs to use a __mutable reference to self__.
+  /// Using a mutable reference means that the passed closure cannot use any reference to self.
+  /// Consider the following situation: You have a `GameManager` struct, which has a `player` Entity
+  /// and a Vector of some wall Entities `walls`; when the `GameManager` calls the `self.player.move_while`,
+  /// it uses a mutable reference to `self` (`GameManager`). Now your passed closure's body might want to
+  /// check for collision with the `walls`, but to do that, it must use a reference to them (`self.walls`),
+  /// which cannot be done because `self` has already been borrowed mutably by this method.
+  /// For this situation there use the method `get_move_while`, which does not directly update the Entity's position,
+  /// but rather it _returns the new position_ as a `Point`. Therefor it does not need a mutable reference to self.
   fn move_while<C: Fn(&Rect) -> bool>(&mut self, can_move_to: C) {
+    let position = &self.get_move_while(can_move_to);
+    self.point_mut().set(&position);
+  }
+
+  /// This method almost does exactly the same as `move_while`, except it doesn't update the Entity's position,
+  /// but it _returns the new position_ instead. This means it does not need to use a mutable reference to `self`.
+  fn get_move_while<C: Fn(&Rect) -> bool>(&self, can_move_to: C) -> Point {
+    let mut position = self.point().clone();
     Axis::for_each( |axis| {
       let pos = match axis {
         Axis::X => self.velocity().x,
@@ -84,46 +107,19 @@ pub trait Movement: Entity + Velocity {
       let rem  = pos % 1.0;
       // Move by one absolute value at a time
       for _i in 0_i32 ..= abs as i32 {
-        let new_position = Point::combine(vec![ self.point(), &axis.point(sign) ]);
-        let new_rect = Rect::new(new_position, self.size().clone(), self.origin().clone());
+        let new_position = Point::combine(vec![ &position, &axis.point(sign) ]);
+        let new_rect = Rect::new(new_position.clone(), self.size().clone(), self.origin().clone());
         if can_move_to(&new_rect) {
-          self.point_mut().set(&new_rect.point());
+          position = new_position;
         } else { break; }
       }
       // Move by the floating point remainder
-      let new_position = Point::combine(vec![ self.point(), &axis.point(rem) ]);
-      let new_rect = Rect::new(new_position, self.size().clone(), self.origin().clone());
+      let new_position = Point::combine(vec![ &position, &axis.point(rem) ]);
+      let new_rect = Rect::new(new_position.clone(), self.size().clone(), self.origin().clone());
       if can_move_to(&new_rect) {
-        self.point_mut().set(&new_rect.point());
+        position = new_position;
       }
     });
-
-    // let x      = self.point().x;
-    // let x_abs  = x.abs();
-    // let sign_x = x.signum();
-    // let rem_x  = x % 1.0;
-
-    // for _i in 0_i32 ..= x_abs as i32 {
-    //   let new_position = Point::combine(vec![ self.point(), &Point::new(sign_x, 0.0) ]);
-    //   if can_move_to(&new_position) {
-    //     self.point_mut().set(&new_position);
-    //   } else { break; }
-    // }
-    // // Move by the floating point remainder
-    // let new_position = Point::combine(vec![ self.point(), &Point::new(rem_x, 0.0) ]);
-    // if can_move_to(&new_position) {
-    //   self.point_mut().set(&new_position);
-    // }
-
-    // let y      = self.point().y;
-    // let y_abs  = y.abs();
-    // let sign_y = y.signum();
-    // let rem_y  = y_abs % 1.0;
-    // for _i in 0_i32 ..= y_abs as i32 {
-    //   let new_position = Point::combine(vec![ self.point(), &Point::new(0.0, sign_y) ]);
-    //   if can_move_to(&new_position) {
-    //     self.point_mut().set(&new_position);
-    //   } else { break; }
-    // }
+    return position;
   }
 }
