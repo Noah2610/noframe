@@ -17,5 +17,17 @@ impl Size {
   }
 }
 
+impl From<[NumType; 2]> for Size {
+  fn from(arr: [NumType; 2]) -> Self {
+    Self::new(arr[0], arr[1])
+  }
+}
+
+impl From<(NumType, NumType)> for Size {
+  fn from(tup: (NumType, NumType)) -> Self {
+    Self::new(tup.0, tup.1)
+  }
+}
+
 #[cfg(test)]
 mod tests;

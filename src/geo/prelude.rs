@@ -1,4 +1,5 @@
 pub use super::{
+  NumType,
   point::Point,
   size::Size,
   mask::{
