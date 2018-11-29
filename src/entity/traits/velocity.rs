@@ -4,7 +4,11 @@ use super::super::Entity;
 pub trait Velocity: Entity {
   fn velocity(&self)         -> &Point;
   fn velocity_mut(&mut self) -> &mut Point;
-  fn max_velocity(&self)     -> &Point;
+  fn max_velocity(&self)     -> Point;
+
+  fn usable_velocity(&self) -> Point {
+    self.velocity().clone()
+  }
 
   fn set_velocity(&mut self, new_velocity: &Point) {
     self.velocity_mut().set(new_velocity);

@@ -36,4 +36,13 @@ impl SideCollection {
       right
     }
   }
+
+  pub fn round(&self) -> Self {
+    Self::new(
+      self.top.round(),
+      self.bottom.round(),
+      self.left.round(),
+      self.right.round()
+    )
+  }
 }

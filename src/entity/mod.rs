@@ -30,6 +30,12 @@ pub trait Entity: Mask {
 
   fn draw_rect(&self, ctx: &mut Context, rect: [f32; 4]) -> GameResult<()> {
     graphics::set_color(ctx, self.color().into())?;
+    let rect = [
+      rect[0].round(),
+      rect[1].round(),
+      rect[2].round(),
+      rect[3].round()
+    ];
     return graphics::rectangle(ctx, graphics::DrawMode::Fill, rect.into());
   }
 

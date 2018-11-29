@@ -14,28 +14,32 @@ pub trait Mask {
   fn size(&self)          -> &Size;
   fn origin(&self)        -> &Origin;
 
-  fn intersects<M: Mask>(&self, other: &M) -> bool {
-    let self_sides:  SideCollection = self.sides();
-    let other_sides: SideCollection = other.sides();
-    return self.is_same(other) || (
+  fn sides_intersect(sides_one: SideCollection, sides_two: SideCollection) -> bool {
+    return (
       (
-        (
-          self_sides.left >= other_sides.left &&
-          self_sides.left <  other_sides.right
-        ) || (
-          self_sides.left  <= other_sides.left &&
-          self_sides.right >  other_sides.left
-        )
-      ) && (
-        (
-          self_sides.top >= other_sides.top &&
-          self_sides.top <  other_sides.bottom
-        ) || (
-          self_sides.top    <= other_sides.top &&
-          self_sides.bottom >  other_sides.top
-        )
+        sides_one.left >= sides_two.left &&
+        sides_one.left <  sides_two.right
+      ) || (
+        sides_one.left  <= sides_two.left &&
+        sides_one.right >  sides_two.left
+      )
+    ) && (
+      (
+        sides_one.top >= sides_two.top &&
+        sides_one.top <  sides_two.bottom
+      ) || (
+        sides_one.top    <= sides_two.top &&
+        sides_one.bottom >  sides_two.top
       )
     );
+  }
+
+  fn intersects<M: Mask>(&self, other: &M) -> bool {
+    self.is_same(other) || Self::sides_intersect(self.sides(), other.sides())
+  }
+
+  fn intersects_round<M: Mask>(&self, other: &M) -> bool {
+    self.is_same(other) || Self::sides_intersect(self.sides().round(), other.sides().round())
   }
 
   fn is_same<M: Mask>(&self, other: &M) -> bool {

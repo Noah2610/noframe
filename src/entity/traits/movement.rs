@@ -1,7 +1,6 @@
 use ::geo::{
   NumType,
   point::Point,
-  mask::Mask,
   rect::Rect
 };
 use super::{
@@ -96,15 +95,15 @@ pub trait Movement: Entity + Velocity {
   fn get_move_while<C: Fn(&Rect) -> bool>(&self, can_move_to: C) -> Point {
     let mut position = self.point().clone();
     Axis::for_each( |axis| {
-      let pos = match axis {
-        Axis::X => self.velocity().x,
-        Axis::Y => self.velocity().y,
+      let vel = match axis {
+        Axis::X => self.usable_velocity().x,
+        Axis::Y => self.usable_velocity().y
       };
-      let abs  = pos.abs();
-      let sign = if pos as i32 != 0 {
-        pos.signum()
+      let abs  = vel.abs();
+      let sign = if vel as i32 != 0 {
+        vel.signum()
       } else { 0.0 };
-      let rem  = pos % 1.0;
+      let rem  = vel % 1.0;
       // Move by one absolute value at a time
       for _i in 0_i32 ..= abs as i32 {
         let new_position = Point::combine(vec![ &position, &axis.point(sign) ]);

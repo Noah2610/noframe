@@ -1,3 +1,4 @@
+use std::fmt;
 use super::NumType;
 
 #[derive(Debug, Clone, PartialEq)]
@@ -17,8 +18,7 @@ impl Point {
   ///   assert_eq!((32.0, 64.0), (point.x, point.y))
   ///   ```
   pub fn new(x: NumType, y: NumType) -> Self {
-    Self { x, y }
-  }
+    Self { x, y } }
 
   /// Returns a new `Point` with the accumulated `x` and `y` values
   /// of all points, passed as a `Vec<&Point>`.
@@ -112,6 +112,19 @@ impl Point {
   pub fn invert(&mut self) {
     self.x *= -1.0;
     self.y *= -1.0;
+  }
+
+  pub fn mult_axes_by(&self, mult: NumType) -> Point {
+    Point::new(
+      self.x * mult,
+      self.y * mult
+    )
+  }
+}
+
+impl fmt::Display for Point {
+  fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    write!(f, "x: {}, y: {}", self.x, self.y)
   }
 }
 
