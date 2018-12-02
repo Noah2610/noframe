@@ -1,4 +1,5 @@
 use ::geo::point::Point;
+use ::geo::NumType;
 use super::super::Entity;
 
 pub trait Velocity: Entity {
@@ -12,6 +13,14 @@ pub trait Velocity: Entity {
 
   fn set_velocity(&mut self, new_velocity: &Point) {
     self.velocity_mut().set(new_velocity);
+  }
+
+  fn set_velocity_x(&mut self, val: NumType) {
+    self.velocity_mut().set_x(val);
+  }
+
+  fn set_velocity_y(&mut self, val: NumType) {
+    self.velocity_mut().set_y(val);
   }
 
   fn add_velocity(&mut self, incr_velocity: &Point) {
