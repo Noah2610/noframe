@@ -42,6 +42,12 @@ pub trait Mask {
     self.is_same(other) || Self::sides_intersect(self.sides().round(), other.sides().round())
   }
 
+  fn intersects_point(&self, point: &Point) -> bool {
+    let sides = self.sides();
+    point.x > sides.left && point.x < sides.right &&
+      point.y > sides.top && point.y < sides.bottom
+  }
+
   fn is_same<M: Mask>(&self, other: &M) -> bool {
     self.sides() == other.sides()
   }
