@@ -1,3 +1,5 @@
+use super::super::NumType;
+
 #[derive(Debug, Clone)]
 pub enum Origin {
   TopLeft,
@@ -21,15 +23,17 @@ pub enum Side {
 
 #[derive(PartialEq)]
 pub struct SideCollection {
-  pub top:    f32,
-  pub bottom: f32,
-  pub left:   f32,
-  pub right:  f32
+  index:      usize,
+  pub top:    NumType,
+  pub bottom: NumType,
+  pub left:   NumType,
+  pub right:  NumType
 }
 
 impl SideCollection {
-  pub fn new(top: f32, bottom: f32, left: f32, right: f32) -> Self {
+  pub fn new(top: NumType, bottom: NumType, left: NumType, right: NumType) -> Self {
     Self {
+      index: 0,
       top,
       bottom,
       left,
@@ -43,6 +47,33 @@ impl SideCollection {
       self.bottom.round(),
       self.left.round(),
       self.right.round()
+    )
+  }
+}
+
+impl Iterator for SideCollection {
+  type Item = (Side, NumType);
+
+  fn next(&mut self) -> Option<(Side, NumType)> {
+    self.index += 1;
+    match self.index {
+      1 => Some((Side::Top,    self.top)),
+      2 => Some((Side::Bottom, self.bottom)),
+      3 => Some((Side::Left,   self.left)),
+      4 => Some((Side::Right,  self.right)),
+      _ => None
+    }
+  }
+}
+
+impl std::iter::FromIterator<NumType> for SideCollection {
+  fn from_iter<T: IntoIterator<Item=NumType>>(iter: T) -> Self {
+    let mut iter = iter.into_iter();
+    Self::new(
+      iter.next().unwrap_or(0.0),
+      iter.next().unwrap_or(0.0),
+      iter.next().unwrap_or(0.0),
+      iter.next().unwrap_or(0.0),
     )
   }
 }
