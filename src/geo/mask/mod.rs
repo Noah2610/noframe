@@ -96,6 +96,18 @@ pub trait Mask {
     }
   }
 
+  fn top_right(&self) -> Point {
+    Point::combine(vec![&self.top_left(), &Point::new(self.size().w, 0.0)])
+  }
+
+  fn bottom_left(&self) -> Point {
+    Point::combine(vec![&self.top_left(), &Point::new(0.0, self.size().h)])
+  }
+
+  fn bottom_right(&self) -> Point {
+    Point::combine(vec![&self.top_left(), &Point::new(self.size().w, self.size().h)])
+  }
+
   fn center(&self) -> Point {
     Point::combine(vec![self.point(), &self.size().center()])
   }
