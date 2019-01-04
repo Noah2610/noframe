@@ -1,4 +1,4 @@
-use std::fmt;
+use std::{ ops, fmt };
 use super::NumType;
 
 #[derive(Debug, Clone, PartialEq)]
@@ -119,6 +119,68 @@ impl Point {
       self.x * mult,
       self.y * mult
     )
+  }
+}
+
+impl ops::Add for Point {
+  type Output = Point;
+  fn add(self, other: Point) -> Point {
+    Point::combine(vec![&self, &other])
+  }
+}
+
+impl ops::AddAssign for Point {
+  fn add_assign(&mut self, other: Point) {
+    self.x += other.x;
+    self.y += other.y;
+  }
+}
+
+impl ops::Sub for Point {
+  type Output = Point;
+  fn sub(self, other: Point) -> Point {
+    Point::combine(vec![&self, &other.inverted()])
+  }
+}
+
+impl ops::SubAssign for Point {
+  fn sub_assign(&mut self, other: Point) {
+    self.x -= other.x;
+    self.y -= other.y;
+  }
+}
+
+impl ops::Mul for Point {
+  type Output = Point;
+  fn mul(self, other: Point) -> Point {
+    Point::new(
+      self.x * other.x,
+      self.y * other.y
+    )
+  }
+}
+
+impl ops::MulAssign for Point {
+  fn mul_assign(&mut self, other: Point) {
+    self.x *= other.x;
+    self.y *= other.y;
+  }
+}
+
+impl ops::Div for Point {
+  type Output = Point;
+  fn div(self, other: Point) -> Point {
+    Point::new(
+      self.x / other.x,
+      self.y / other.y
+    )
+  }
+}
+
+impl ops::DivAssign for Point {
+  fn div_assign(&mut self, other: Point) {
+    self.x /= other.x;
+    self.y /= other.y;
   }
 }
 
