@@ -4,6 +4,7 @@ use std::time::{
 };
 use std::fmt;
 
+#[derive(Clone)]
 pub struct Deltatime {
   value:       Duration,
   last_update: Instant
