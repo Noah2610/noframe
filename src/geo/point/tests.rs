@@ -31,6 +31,14 @@ fn combine_multiple_points() {
 }
 
 #[test]
+fn round_point() {
+  let mut point = Point::new(10.5, 20.4);
+  let expected = Point::new(11.0, 20.0);
+  point.round();
+  assert_eq!(point, expected);
+}
+
+#[test]
 fn create_ggez_point2_from_point() {
   let point  = Point::new(10.0, 20.0);
   let point2 = ::ggez::graphics::Point2::from(&point);

@@ -120,6 +120,12 @@ impl Point {
       self.y * mult
     )
   }
+
+  /// Round the Point's `x` and `y` values.
+  pub fn round(&mut self) {
+    self.x = self.x.round();
+    self.y = self.y.round();
+  }
 }
 
 impl ops::Add for Point {

@@ -1,6 +1,6 @@
 [package]
 name = "noframe"
-version = "0.0.7"
+version = "0.0.8"
 authors = ["Noah Rosenzweig <rosenzweig.noah@gmail.com>"]
 description = "Game development framework using crate ggez."
 license = "MIT"
