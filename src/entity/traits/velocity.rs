@@ -3,15 +3,15 @@ use ::geo::NumType;
 use super::super::Entity;
 
 pub trait Velocity: Entity {
-  fn velocity(&self)         -> &Point;
-  fn velocity_mut(&mut self) -> &mut Point;
-  fn max_velocity(&self)     -> Point;
+  fn velocity(&self)         -> &Point<NumType>;
+  fn velocity_mut(&mut self) -> &mut Point<NumType>;
+  fn max_velocity(&self)     -> Point<NumType>;
 
-  fn usable_velocity(&self) -> Point {
+  fn usable_velocity(&self) -> Point<NumType> {
     self.velocity().clone()
   }
 
-  fn set_velocity(&mut self, new_velocity: &Point) {
+  fn set_velocity(&mut self, new_velocity: &Point<NumType>) {
     self.velocity_mut().set(new_velocity);
   }
 
@@ -23,7 +23,7 @@ pub trait Velocity: Entity {
     self.velocity_mut().set_y(val);
   }
 
-  fn add_velocity(&mut self, incr_velocity: &Point) {
+  fn add_velocity(&mut self, incr_velocity: &Point<NumType>) {
     self.velocity_mut().add(incr_velocity);
     if self.velocity().x > self.max_velocity().x {
       let new_x = self.max_velocity().x;
@@ -41,7 +41,7 @@ pub trait Velocity: Entity {
     }
   }
 
-  fn decrease_velocity(&mut self, decr_velocity: &Point) {
+  fn decrease_velocity(&mut self, decr_velocity: &Point<NumType>) {
     let new_velocity = {
       let velocity = self.velocity();
       let new_x = velocity.x + match velocity.x {

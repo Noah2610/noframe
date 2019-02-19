@@ -1,17 +1,17 @@
 pub mod misc;
 
-use super::NumType;
 use super::{
+  NumType,
   point::Point,
-  size::Size
+  size::Size,
 };
 
 use self::misc::{ *, Side::* };
 
 pub trait Mask {
-  fn point(&self)         -> &Point;
-  fn point_mut(&mut self) -> &mut Point;
-  fn size(&self)          -> &Size;
+  fn point(&self)         -> &Point<NumType>;
+  fn point_mut(&mut self) -> &mut Point<NumType>;
+  fn size(&self)          -> &Size<NumType>;
   fn origin(&self)        -> &Origin;
 
   fn sides_intersect(sides_one: SideCollection, sides_two: SideCollection) -> bool {
@@ -42,7 +42,7 @@ pub trait Mask {
     self.is_same(other) || Self::sides_intersect(self.sides().round(), other.sides().round())
   }
 
-  fn intersects_point(&self, point: &Point) -> bool {
+  fn intersects_point(&self, point: &Point<NumType>) -> bool {
     let sides = self.sides();
     point.x > sides.left && point.x < sides.right &&
       point.y > sides.top && point.y < sides.bottom
@@ -52,9 +52,9 @@ pub trait Mask {
     self.sides() == other.sides()
   }
 
-  fn top_left(&self) -> Point {
-    let point: &Point = self.point();
-    let size:  &Size  = self.size();
+  fn top_left(&self) -> Point<NumType> {
+    let point: &Point<NumType> = self.point();
+    let size:  &Size<NumType>  = self.size();
 
     match self.origin() {
       Origin::TopLeft => Point::new(
@@ -96,40 +96,40 @@ pub trait Mask {
     }
   }
 
-  fn top_right(&self) -> Point {
+  fn top_right(&self) -> Point<NumType> {
     self.top_left() + Point::new(self.size().w, 0.0)
   }
 
-  fn top_center(&self) -> Point {
+  fn top_center(&self) -> Point<NumType> {
     self.top_left() + Point::new(self.size().w * 0.5, 0.0)
   }
 
-  fn bottom_left(&self) -> Point {
+  fn bottom_left(&self) -> Point<NumType> {
     self.top_left() + Point::new(0.0, self.size().h)
   }
 
-  fn bottom_right(&self) -> Point {
+  fn bottom_right(&self) -> Point<NumType> {
     self.top_left() + Point::new(self.size().w, self.size().h)
   }
 
-  fn bottom_center(&self) -> Point {
+  fn bottom_center(&self) -> Point<NumType> {
     self.top_left() + Point::new(self.size().w * 0.5, self.size().h)
   }
 
-  fn center_left(&self) -> Point {
+  fn center_left(&self) -> Point<NumType> {
     self.top_left() + Point::new(0.0, self.size().h * 0.5)
   }
 
-  fn center_right(&self) -> Point {
+  fn center_right(&self) -> Point<NumType> {
     self.top_left() + Point::new(self.size().w, self.size().h * 0.5)
   }
 
-  fn center(&self) -> Point {
+  fn center(&self) -> Point<NumType> {
     Point::combine(vec![self.point(), &self.size().center()])
   }
 
   fn side(&self, side: Side) -> NumType {
-    let top_left: Point = self.top_left();
+    let top_left: Point<NumType> = self.top_left();
     return match side {
       Top    => top_left.y,
       Bottom => top_left.y + self.size().h,

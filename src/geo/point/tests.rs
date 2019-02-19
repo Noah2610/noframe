@@ -41,6 +41,6 @@ fn round_point() {
 #[test]
 fn create_ggez_point2_from_point() {
   let point  = Point::new(10.0, 20.0);
-  let point2 = ::ggez::graphics::Point2::from(&point);
+  let point2 = ::ggez::nalgebra::Point2::from(&point);
   assert_eq!(point.as_tup(), (point2.x, point2.y));
 }

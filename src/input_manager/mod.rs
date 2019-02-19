@@ -1,13 +1,13 @@
 use ::ggez::event::{
-  Keycode,
+  KeyCode,
   MouseButton,
-  Mod
+  KeyMods,
 };
 
 pub struct InputManager {
-  keys_down:    Vec<Keycode>,
-  keys_up:      Vec<Keycode>,
-  keys_pressed: Vec<Keycode>,
+  keys_down:    Vec<KeyCode>,
+  keys_up:      Vec<KeyCode>,
+  keys_pressed: Vec<KeyCode>,
   mouse_down:   Vec<MouseButton>,
   mouse_up:     Vec<MouseButton>
 }
@@ -23,15 +23,15 @@ impl InputManager {
     }
   }
 
-  pub fn keys_pressed(&self) -> &Vec<Keycode> {
+  pub fn keys_pressed(&self) -> &Vec<KeyCode> {
     &self.keys_pressed
   }
 
-  pub fn keys_down(&self) -> &Vec<Keycode> {
+  pub fn keys_down(&self) -> &Vec<KeyCode> {
     &self.keys_down
   }
 
-  pub fn keys_up(&self) -> &Vec<Keycode> {
+  pub fn keys_up(&self) -> &Vec<KeyCode> {
     &self.keys_up
   }
 
@@ -43,7 +43,12 @@ impl InputManager {
     &self.mouse_up
   }
 
-  pub fn key_down(&mut self, keycode: Keycode, _keymod: Mod, repeat: bool) {
+  pub fn key_down(
+    &mut self,
+    keycode:  KeyCode,
+    _keymods: KeyMods,
+    repeat:   bool
+  ) {
     if repeat { return; }
     if !self.keys_pressed.iter().any( |&key| keycode == key ) {
       self.keys_pressed.push(keycode);
@@ -51,7 +56,12 @@ impl InputManager {
     self.keys_down.push(keycode);
   }
 
-  pub fn key_up(&mut self, keycode: Keycode, _keymod: Mod, repeat: bool) {
+  pub fn key_up(
+    &mut self,
+    keycode:  KeyCode,
+    _keymods: KeyMods,
+    repeat:   bool
+  ) {
     if repeat { return (); }
     let index: Option<usize> = self.keys_pressed.iter().position( |&key| keycode == key );
     if let Some(i) = index {

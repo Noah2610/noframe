@@ -10,13 +10,13 @@ use super::{
 
 #[derive(Debug)]
 pub struct Rect {
-  point:  Point,
-  size:   Size,
-  origin: Origin
+  point:  Point<NumType>,
+  size:   Size<NumType>,
+  origin: Origin,
 }
 
 impl Rect {
-  pub fn new(point: Point, size: Size, origin: Origin) -> Self {
+  pub fn new(point: Point<NumType>, size: Size<NumType>, origin: Origin) -> Self {
     Self {
       point,
       size,
@@ -34,13 +34,13 @@ impl Rect {
 }
 
 impl Mask for Rect {
-  fn point(&self) -> &Point {
+  fn point(&self) -> &Point<NumType> {
     &self.point
   }
-  fn point_mut(&mut self) -> &mut Point {
+  fn point_mut(&mut self) -> &mut Point<NumType> {
     &mut self.point
   }
-  fn size(&self) -> &Size {
+  fn size(&self) -> &Size<NumType> {
     &self.size
   }
   fn origin(&self) -> &Origin {

@@ -13,13 +13,13 @@ use ::geo::{
 use ::entity::Entity;
 
 pub struct Camera {
-  point:  Point,
-  size:   Size,
-  origin: Origin
+  point:  Point<NumType>,
+  size:   Size<NumType>,
+  origin: Origin,
 }
 
 impl Camera {
-  pub fn new(size: Size) -> Self {
+  pub fn new(size: Size<NumType>) -> Self {
     Camera {
       point: Point::new(0.0, 0.0),
       size,
@@ -27,15 +27,15 @@ impl Camera {
     }
   }
 
-  pub fn point(&self) -> &Point {
+  pub fn point(&self) -> &Point<NumType> {
     &self.point
   }
 
-  pub fn move_to(&mut self, point: &Point) {
+  pub fn move_to(&mut self, point: &Point<NumType>) {
     self.point.set(point);
   }
 
-  pub fn move_by(&mut self, point: &Point) {
+  pub fn move_by(&mut self, point: &Point<NumType>) {
     self.point.add(point);
   }
 
@@ -56,13 +56,13 @@ impl Camera {
 }
 
 impl Mask for Camera {
-  fn point(&self) -> &Point {
+  fn point(&self) -> &Point<NumType> {
     &self.point
   }
-  fn point_mut(&mut self) -> &mut Point {
+  fn point_mut(&mut self) -> &mut Point<NumType> {
     &mut self.point
   }
-  fn size(&self) -> &Size {
+  fn size(&self) -> &Size<NumType> {
     &self.size
   }
   fn origin(&self) -> &Origin {

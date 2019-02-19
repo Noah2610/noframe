@@ -40,7 +40,7 @@ pub enum Step {
 }
 
 impl Step {
-  pub fn point(&self) -> Point {
+  pub fn point(&self) -> Point<NumType> {
     match self {
       Step::X(pol) => Point::new(pol.sign() as NumType, 0.0),
       Step::Y(pol) => Point::new(0.0, pol.sign() as NumType)
@@ -56,7 +56,7 @@ impl Axis {
     iterate(Axis::Y);
   }
 
-  fn point(&self, value: NumType) -> Point {
+  fn point(&self, value: NumType) -> Point<NumType> {
     match self {
       Axis::X => Point::new(value, 0.0),
       Axis::Y => Point::new(0.0, value)
@@ -92,7 +92,7 @@ pub trait Movement: Entity + Velocity {
 
   /// This method almost does exactly the same as `move_while`, except it doesn't update the Entity's position,
   /// but it _returns the new position_ instead. This means it does not need to use a mutable reference to `self`.
-  fn get_move_while<C: Fn(&Rect) -> bool>(&self, can_move_to: C) -> Point {
+  fn get_move_while<C: Fn(&Rect) -> bool>(&self, can_move_to: C) -> Point<NumType> {
     let mut position = self.point().clone();
     Axis::for_each( |axis| {
       let vel = match axis {

@@ -1,10 +1,9 @@
-use super::super::NumType;
 use super::super::prelude::*;
 
 #[derive(Debug)]
 struct Body {
-  point:  Point,
-  size:   Size,
+  point:  Point<NumType>,
+  size:   Size<NumType>,
   origin: Origin
 }
 
@@ -19,13 +18,13 @@ impl Body {
 }
 
 impl Mask for Body {
-  fn point(&self) -> &Point {
+  fn point(&self) -> &Point<NumType> {
     &self.point
   }
-  fn point_mut(&mut self) -> &mut Point {
+  fn point_mut(&mut self) -> &mut Point<NumType> {
     &mut self.point
   }
-  fn size(&self) -> &Size {
+  fn size(&self) -> &Size<NumType> {
     &self.size
   }
   fn origin(&self) -> &Origin {

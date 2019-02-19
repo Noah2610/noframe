@@ -7,13 +7,13 @@ pub use self::traits::movement::Movement;
 use ::ggez::{
   Context,
   GameResult,
-  graphics
+  graphics::{ self, Mesh, DrawMode, DrawParam },
 };
 
 use ::settings::entity::*;
-
 use ::color::Color;
 use ::geo::{
+  NumType,
   point::Point,
   size::Size,
   mask::Mask
@@ -29,32 +29,32 @@ pub trait Entity: Mask {
   }
 
   fn draw_rect(&self, ctx: &mut Context, rect: [f32; 4]) -> GameResult<()> {
-    graphics::set_color(ctx, self.color().into())?;
     let rect = [
       rect[0].round(),
       rect[1].round(),
       rect[2].round(),
       rect[3].round()
     ];
-    return graphics::rectangle(ctx, graphics::DrawMode::Fill, rect.into());
+    let mesh = Mesh::new_rectangle(ctx, DrawMode::fill(), rect.into(), self.color().into())?;
+    graphics::draw(ctx, &mesh, DrawParam::new())
   }
 
   fn draw(&self, ctx: &mut Context) -> GameResult<()> {
     let rect = {
-      let point: Point = self.top_left();
-      let size:  &Size = self.size();
+      let point: Point<NumType> = self.top_left();
+      let size:  &Size<NumType> = self.size();
       [
         point.x, point.y,
         size.w,  size.h
       ]
     };
-    return self.draw_rect(ctx, rect);
+    self.draw_rect(ctx, rect)
   }
 
-  fn draw_offset(&self, ctx: &mut Context, offset: &Point) -> GameResult<()> {
+  fn draw_offset(&self, ctx: &mut Context, offset: &Point<NumType>) -> GameResult<()> {
     let rect = {
-      let point: Point = Point::combine(vec![&self.top_left(), offset]);
-      let size:  &Size = self.size();
+      let point: Point<NumType> = Point::combine(vec![&self.top_left(), offset]);
+      let size:  &Size<NumType> = self.size();
       [
         point.x, point.y,
         size.w,  size.h

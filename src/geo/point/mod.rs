@@ -1,13 +1,17 @@
-use std::{ ops, fmt };
+use std::{ ops, fmt, convert };
 use super::NumType;
+use super::num_traits::*;
+
+// Experimental trait aliases: https://github.com/rust-lang/rust/issues/41517
+//trait PointBounds = Num + NumOps + NumAssignOps + ToPrimitive + FromPrimitive + NumCast;
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct Point {
-  pub x: NumType,
-  pub y: NumType
+pub struct Point<T: Copy + Into<NumType> + Num + NumOps + NumAssignOps + ToPrimitive + FromPrimitive + NumCast> {
+  pub x: T,
+  pub y: T,
 }
 
-impl Point {
+impl<T: Copy + Into<NumType> + Num + NumOps + NumAssignOps + ToPrimitive + FromPrimitive + NumCast> Point<T> {
   /// Returns a new `Point` with the passed `x` and `y` values.
   /// # Example
   ///   ```
@@ -17,8 +21,16 @@ impl Point {
   ///
   ///   assert_eq!((32.0, 64.0), (point.x, point.y))
   ///   ```
-  pub fn new(x: NumType, y: NumType) -> Self {
-    Self { x, y } }
+  pub fn new(x: T, y: T) -> Self {
+    Self { x, y }
+  }
+
+  // pub fn zero() -> Self {
+  //   Self {
+  //     x: 0 as T,
+  //     y: 0 as T,
+  //   }
+  // }
 
   /// Returns a new `Point` with the accumulated `x` and `y` values
   /// of all points, passed as a `Vec<&Point>`.
@@ -33,27 +45,27 @@ impl Point {
   ///
   ///   assert_eq!(Point::new(42.0, 10.0), Point::combine(points));
   ///   ```
-  pub fn combine(points: Vec<&Point>) -> Point {
-    let mut point_acc: Point = Point::new(0.0, 0.0);
+  pub fn combine(points: Vec<&Point<T>>) -> Point<T> {
+    let mut point_acc: Point<T> = Point::new(T::from(0).unwrap(), T::from(0).unwrap());
     for point in points {
       point_acc.add(point);
     }
-    return point_acc;
+    point_acc
   }
 
   /// Set the `x` and `y` values to the values of the passed `Point` reference.
-  pub fn set(&mut self, point: &Point) {
+  pub fn set(&mut self, point: &Point<T>) {
     self.x = point.x;
     self.y = point.y;
   }
 
   /// Set the `x` value.
-  pub fn set_x(&mut self, value: NumType) {
+  pub fn set_x(&mut self, value: T) {
     self.x = value;
   }
 
   /// Set the `y` value.
-  pub fn set_y(&mut self, value: NumType) {
+  pub fn set_y(&mut self, value: T) {
     self.y = value;
   }
 
@@ -68,7 +80,7 @@ impl Point {
   ///
   ///   assert_eq!(Point::new(15.0, 10.0), point);
   ///   ```
-  pub fn add(&mut self, point: &Point) {
+  pub fn add(&mut self, point: &Point<T>) {
     self.x += point.x;
     self.y += point.y;
   }
@@ -82,7 +94,7 @@ impl Point {
   ///
   ///   assert_eq!((10.0, 20.0), point.as_tup());
   ///   ```
-  pub fn as_tup(&self) -> (NumType, NumType) {
+  pub fn as_tup(&self) -> (T, T) {
     (self.x, self.y)
   }
 
@@ -95,8 +107,8 @@ impl Point {
   ///
   ///   assert_eq!(Point::new(-10.0, -20.0), point.inverted());
   ///   ```
-  pub fn inverted(&self) -> Point {
-    Point::new(self.x * -1.0, self.y * -1.0)
+  pub fn inverted(&self) -> Point<T> where T: Signed {
+    Point::new(self.x.neg(), self.y.neg())
   }
 
   /// Multiplies the `x` and `y` values by `-1`.
@@ -109,12 +121,14 @@ impl Point {
   ///
   ///   assert_eq!(Point::new(-10.0, -20.0), point);
   ///   ```
-  pub fn invert(&mut self) {
-    self.x *= -1.0;
-    self.y *= -1.0;
+  pub fn invert(&mut self) where T: Signed {
+    self.x = self.x.neg();
+    self.y = self.y.neg();
+    // self.x *= -1.0;
+    // self.y *= -1.0;
   }
 
-  pub fn mult_axes_by(&self, mult: NumType) -> Point {
+  pub fn mult_axes_by(&self, mult: T) -> Point<T> {
     Point::new(
       self.x * mult,
       self.y * mult
@@ -122,43 +136,46 @@ impl Point {
   }
 
   /// Round the Point's `x` and `y` values.
-  pub fn round(&mut self) {
+  pub fn round(&mut self) where T: Float {
     self.x = self.x.round();
     self.y = self.y.round();
   }
 }
 
-impl ops::Add for Point {
-  type Output = Point;
-  fn add(self, other: Point) -> Point {
+impl<T: Copy + Into<NumType> + Num + NumOps + NumAssignOps + ToPrimitive + FromPrimitive + NumCast> ops::Add for Point<T> {
+  type Output = Point<T>;
+  fn add(self, other: Point<T>) -> Point<T> {
     Point::combine(vec![&self, &other])
   }
 }
 
-impl ops::AddAssign for Point {
-  fn add_assign(&mut self, other: Point) {
+impl<T: Copy + Into<NumType> + Num + NumOps + NumAssignOps + ToPrimitive + FromPrimitive + NumCast> ops::AddAssign for Point<T> {
+  fn add_assign(&mut self, other: Point<T>) {
     self.x += other.x;
     self.y += other.y;
   }
 }
 
-impl ops::Sub for Point {
-  type Output = Point;
-  fn sub(self, other: Point) -> Point {
-    Point::combine(vec![&self, &other.inverted()])
+impl<T: Copy + Into<NumType> + Num + NumOps + NumAssignOps + ToPrimitive + FromPrimitive + NumCast> ops::Sub for Point<T> {
+  type Output = Point<T>;
+  fn sub(self, other: Point<T>) -> Point<T> {
+    Point::new(
+      self.x - other.x,
+      self.y - other.y
+    )
   }
 }
 
-impl ops::SubAssign for Point {
-  fn sub_assign(&mut self, other: Point) {
+impl<T: Copy + Into<NumType> + Num + NumOps + NumAssignOps + ToPrimitive + FromPrimitive + NumCast> ops::SubAssign for Point<T> {
+  fn sub_assign(&mut self, other: Point<T>) {
     self.x -= other.x;
     self.y -= other.y;
   }
 }
 
-impl ops::Mul for Point {
-  type Output = Point;
-  fn mul(self, other: Point) -> Point {
+impl<T: Copy + Into<NumType> + Num + NumOps + NumAssignOps + ToPrimitive + FromPrimitive + NumCast> ops::Mul for Point<T> {
+  type Output = Point<T>;
+  fn mul(self, other: Point<T>) -> Point<T> {
     Point::new(
       self.x * other.x,
       self.y * other.y
@@ -166,16 +183,16 @@ impl ops::Mul for Point {
   }
 }
 
-impl ops::MulAssign for Point {
-  fn mul_assign(&mut self, other: Point) {
+impl<T: Copy + Into<NumType> + Num + NumOps + NumAssignOps + ToPrimitive + FromPrimitive + NumCast> ops::MulAssign for Point<T> {
+  fn mul_assign(&mut self, other: Point<T>) {
     self.x *= other.x;
     self.y *= other.y;
   }
 }
 
-impl ops::Div for Point {
-  type Output = Point;
-  fn div(self, other: Point) -> Point {
+impl<T: Copy + Into<NumType> + Num + NumOps + NumAssignOps + ToPrimitive + FromPrimitive + NumCast> ops::Div for Point<T> {
+  type Output = Point<T>;
+  fn div(self, other: Point<T>) -> Point<T> {
     Point::new(
       self.x / other.x,
       self.y / other.y
@@ -183,14 +200,14 @@ impl ops::Div for Point {
   }
 }
 
-impl ops::DivAssign for Point {
-  fn div_assign(&mut self, other: Point) {
+impl<T: Copy + Into<NumType> + Num + NumOps + NumAssignOps + ToPrimitive + FromPrimitive + NumCast> ops::DivAssign for Point<T> {
+  fn div_assign(&mut self, other: Point<T>) {
     self.x /= other.x;
     self.y /= other.y;
   }
 }
 
-impl fmt::Display for Point {
+impl<T: Copy + Into<NumType> + Num + NumOps + NumAssignOps + ToPrimitive + FromPrimitive + NumCast + fmt::Display> fmt::Display for Point<T> {
   fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
     write!(f, "x: {}, y: {}", self.x, self.y)
   }
@@ -198,9 +215,12 @@ impl fmt::Display for Point {
 
 /// Implement the `From` trait for ggez's `Point2` struct,
 /// so that ggez's `Point2` struct can easily be created from our `Point` struct.
-impl<'a> From<&'a Point> for ::ggez::graphics::Point2 {
-  fn from(point: &Point) -> Self {
-    Self::new(point.x, point.y)
+impl<'a, T: Copy + Into<NumType> + Num + NumOps + NumAssignOps + ToPrimitive + FromPrimitive + NumCast> From<&'a Point<T>> for ::ggez::nalgebra::Point2<NumType> {
+  fn from(point: &Point<T>) -> Self {
+    Self::new(
+      point.x.into(),
+      point.y.into()
+    )
   }
 }
 
