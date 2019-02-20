@@ -9,4 +9,5 @@ readme = "README.md"
 
 [dependencies]
 num-traits = "0.2"
+nalgebra = "0.17"
 ggez = { git = "https://github.com/ggez/ggez" }

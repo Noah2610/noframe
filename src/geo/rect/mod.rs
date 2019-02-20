@@ -1,22 +1,24 @@
+use std::fmt::Debug;
+
 use super::{
-  NumType,
-  point::Point,
-  size::Size,
-  mask::{
-    Mask,
-    misc::Origin
-  }
+  Point,
+  Size,
+  Mask,
+  Origin,
+  num_traits::*,
 };
 
 #[derive(Debug)]
-pub struct Rect {
-  point:  Point<NumType>,
-  size:   Size<NumType>,
+pub struct Rect<T>
+where T: Debug + Copy + Num + PartialEq + PartialOrd {
+  point:  Point<T>,
+  size:   Size<T>,
   origin: Origin,
 }
 
-impl Rect {
-  pub fn new(point: Point<NumType>, size: Size<NumType>, origin: Origin) -> Self {
+impl<T> Rect<T>
+where T: Debug + Copy + Num + PartialEq + PartialOrd {
+  pub fn new(point: Point<T>, size: Size<T>, origin: Origin) -> Self {
     Self {
       point,
       size,
@@ -24,7 +26,7 @@ impl Rect {
     }
   }
 
-  pub fn new_simple(x: NumType, y: NumType, w: NumType, h: NumType) -> Self {
+  pub fn new_simple(x: T, y: T, w: T, h: T) -> Self {
     Self {
       point:  Point::new(x, y),
       size:   Size::new(w, h),
@@ -33,14 +35,15 @@ impl Rect {
   }
 }
 
-impl Mask for Rect {
-  fn point(&self) -> &Point<NumType> {
+impl<T> Mask<T> for Rect<T>
+where T: Debug + Copy + Num + PartialEq + PartialOrd {
+  fn point(&self) -> &Point<T> {
     &self.point
   }
-  fn point_mut(&mut self) -> &mut Point<NumType> {
+  fn point_mut(&mut self) -> &mut Point<T> {
     &mut self.point
   }
-  fn size(&self) -> &Size<NumType> {
+  fn size(&self) -> &Size<T> {
     &self.size
   }
   fn origin(&self) -> &Origin {

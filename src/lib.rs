@@ -1,4 +1,5 @@
 extern crate num_traits;
+extern crate nalgebra;
 extern crate ggez;
 
 mod settings;

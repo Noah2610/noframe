@@ -1,4 +1,6 @@
-use super::super::NumType;
+use std::fmt::Debug;
+
+use super::super::num_traits::*;
 
 #[derive(Debug, Clone)]
 pub enum Origin {
@@ -22,16 +24,18 @@ pub enum Side {
 }
 
 #[derive(PartialEq)]
-pub struct SideCollection {
+pub struct SideCollection<T>
+where T: Debug + Copy + Num + PartialEq + PartialOrd {
   index:      usize,
-  pub top:    NumType,
-  pub bottom: NumType,
-  pub left:   NumType,
-  pub right:  NumType
+  pub top:    T,
+  pub bottom: T,
+  pub left:   T,
+  pub right:  T
 }
 
-impl SideCollection {
-  pub fn new(top: NumType, bottom: NumType, left: NumType, right: NumType) -> Self {
+impl<T> SideCollection<T>
+where T: Debug + Copy + Num + PartialEq + PartialOrd {
+  pub fn new(top: T, bottom: T, left: T, right: T) -> Self {
     Self {
       index: 0,
       top,
@@ -41,7 +45,7 @@ impl SideCollection {
     }
   }
 
-  pub fn round(&self) -> Self {
+  pub fn round(&self) -> Self where T: Float {
     Self::new(
       self.top.round(),
       self.bottom.round(),
@@ -51,10 +55,11 @@ impl SideCollection {
   }
 }
 
-impl Iterator for SideCollection {
-  type Item = (Side, NumType);
+impl<T> Iterator for SideCollection<T>
+where T: Debug + Copy + Num + PartialEq + PartialOrd {
+  type Item = (Side, T);
 
-  fn next(&mut self) -> Option<(Side, NumType)> {
+  fn next(&mut self) -> Option<(Side, T)> {
     self.index += 1;
     match self.index {
       1 => Some((Side::Top,    self.top)),
@@ -66,14 +71,15 @@ impl Iterator for SideCollection {
   }
 }
 
-impl std::iter::FromIterator<NumType> for SideCollection {
-  fn from_iter<T: IntoIterator<Item=NumType>>(iter: T) -> Self {
+impl<T> std::iter::FromIterator<T> for SideCollection<T>
+where T: Debug + Copy + Num + PartialEq + PartialOrd {
+  fn from_iter<U: IntoIterator<Item=T>>(iter: U) -> Self {
     let mut iter = iter.into_iter();
     Self::new(
-      iter.next().unwrap_or(0.0),
-      iter.next().unwrap_or(0.0),
-      iter.next().unwrap_or(0.0),
-      iter.next().unwrap_or(0.0),
+      iter.next().unwrap_or(T::zero()),
+      iter.next().unwrap_or(T::zero()),
+      iter.next().unwrap_or(T::zero()),
+      iter.next().unwrap_or(T::zero()),
     )
   }
 }
