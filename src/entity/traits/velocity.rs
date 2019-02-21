@@ -8,7 +8,7 @@ use ::geo::{
 use super::super::Entity;
 
 pub trait Velocity<T>: Entity<T>
-where T: Debug + Copy + Num + PartialEq + PartialOrd {
+where T: Debug + Copy + Num + PartialEq + PartialOrd + 'static {
   fn velocity(&self)         -> &Point<T>;
   fn velocity_mut(&mut self) -> &mut Point<T>;
   fn max_velocity(&self)     -> Point<T>;

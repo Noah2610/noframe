@@ -25,3 +25,11 @@ pub use self::size::Size;
 pub use self::mask::Mask;
 pub use self::mask::misc::Origin;
 pub use self::rect::Rect;
+
+use std::fmt::Debug;
+use self::num_traits::{ Num, Signed };
+
+pub fn invert_point<T>(point: &Point<T>) -> Point<T>
+where T: Debug + Copy + Num + PartialEq + PartialOrd + Signed + 'static {
+  Point::new(-point.x, -point.y)
+}

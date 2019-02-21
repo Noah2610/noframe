@@ -13,7 +13,7 @@ use super::{
 use self::misc::{ *, Side::* };
 
 pub trait Mask<T>
-where T: Debug + Copy + Num + PartialEq + PartialOrd {
+where T: Debug + Copy + Num + PartialEq + PartialOrd + 'static {
   fn point(&self)         -> &Point<T>;
   fn point_mut(&mut self) -> &mut Point<T>;
   fn size(&self)          -> &Size<T>;

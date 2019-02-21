@@ -44,7 +44,7 @@ pub enum Step {
 
 impl Step {
   pub fn vector<T>(&self) -> Vector<T>
-    where T: Debug + Copy + Num + PartialEq + PartialOrd + From<i8> {
+    where T: Debug + Copy + Num + PartialEq + PartialOrd + From<i8> + 'static {
     match self {
       Step::X(pol) => Vector::new(pol.sign().into(), T::zero()),
       Step::Y(pol) => Vector::new(T::zero(), pol.sign().into())
@@ -61,7 +61,7 @@ impl Axis {
   }
 
   fn vector<T>(&self, value: T) -> Vector<T>
-  where T: Debug + Copy + Num + PartialEq + PartialOrd + Signed {
+  where T: Debug + Copy + Num + PartialEq + PartialOrd + Signed + 'static {
     match self {
       Axis::X => Vector::new(value, T::zero()),
       Axis::Y => Vector::new(T::zero(), value)
@@ -70,7 +70,7 @@ impl Axis {
 }
 
 pub trait Movement<T>: Entity<T> + Velocity<T>
-where T: Debug + Copy + Num + PartialEq + PartialOrd + Signed + Into<i32> {
+where T: Debug + Copy + Num + PartialEq + PartialOrd + Signed + Into<i32> + 'static {
   /// Moves one pixel in one direction.
   fn step(&mut self, step: Step) {
     *self.point_mut() += step.vector();

@@ -10,14 +10,14 @@ use super::{
 
 #[derive(Debug)]
 pub struct Rect<T>
-where T: Debug + Copy + Num + PartialEq + PartialOrd {
+where T: Debug + Copy + Num + PartialEq + PartialOrd + 'static {
   point:  Point<T>,
   size:   Size<T>,
   origin: Origin,
 }
 
 impl<T> Rect<T>
-where T: Debug + Copy + Num + PartialEq + PartialOrd {
+where T: Debug + Copy + Num + PartialEq + PartialOrd + 'static {
   pub fn new(point: Point<T>, size: Size<T>, origin: Origin) -> Self {
     Self {
       point,
@@ -36,7 +36,7 @@ where T: Debug + Copy + Num + PartialEq + PartialOrd {
 }
 
 impl<T> Mask<T> for Rect<T>
-where T: Debug + Copy + Num + PartialEq + PartialOrd {
+where T: Debug + Copy + Num + PartialEq + PartialOrd + 'static {
   fn point(&self) -> &Point<T> {
     &self.point
   }

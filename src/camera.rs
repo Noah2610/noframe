@@ -1,4 +1,5 @@
 use std::fmt::Debug;
+use std::ops;
 
 use ::ggez::{
   GameResult,
@@ -6,6 +7,7 @@ use ::ggez::{
 };
 
 use ::geo::{
+  Vector,
   Point,
   Size,
   Mask,
@@ -15,14 +17,14 @@ use ::geo::{
 use ::entity::Entity;
 
 pub struct Camera<T>
-where T: Debug + Copy + Num + PartialEq + PartialOrd {
+where T: Debug + Copy + Num + PartialEq + PartialOrd + ops::AddAssign + Signed + Into<f32> + 'static {
   point:  Point<T>,
   size:   Size<T>,
   origin: Origin,
 }
 
 impl<T> Camera<T>
-where T: Debug + Copy + Num + PartialEq + PartialOrd {
+where T: Debug + Copy + Num + PartialEq + PartialOrd + ops::AddAssign + Signed + Into<f32> + 'static {
   pub fn new(size: Size<T>) -> Self {
     Camera {
       point: Point::new(T::zero(), T::zero()),
@@ -36,31 +38,32 @@ where T: Debug + Copy + Num + PartialEq + PartialOrd {
   }
 
   pub fn move_to(&mut self, point: &Point<T>) {
-    self.point.set(point);
+    self.point.x = point.x;
+    self.point.y = point.y;
   }
 
-  pub fn move_by(&mut self, point: &Point<T>) {
-    self.point.add(point);
+  pub fn move_by(&mut self, vector: &Vector<T>) {
+    self.point += vector;
   }
 
   pub fn move_x(&mut self, incr: T) {
-    self.move_by(&Point::new(incr, T::zero()));
+    self.move_by(&Vector::new(incr, T::zero()));
   }
 
   pub fn move_y(&mut self, incr: T) {
-    self.move_by(&Point::new(T::zero(), incr));
+    self.move_by(&Vector::new(T::zero(), incr));
   }
 
   pub fn draw<E: Entity<T>>(&self, ctx: &mut Context, entity: &E) -> GameResult<()> {
     if self.intersects(entity) {
-      entity.draw_offset(ctx, nalgebra::inverse(&self.top_left()))?;
+      entity.draw_offset(ctx, &crate::geo::invert_point(&self.top_left()).into())?;
     }
     Ok(())
   }
 }
 
 impl<T> Mask<T> for Camera<T>
-where T: Debug + Copy + Num + PartialEq + PartialOrd {
+where T: Debug + Copy + Num + PartialEq + PartialOrd + ops::AddAssign + Signed + 'static {
   fn point(&self) -> &Point<T> {
     &self.point
   }
