@@ -83,6 +83,82 @@ fn test_keys_up() {
 }
 
 #[test]
+fn test_has_key_down() {
+  let (mut manager, keys, nokeys, mods) = get_keys();
+
+  for key in keys.iter() {      //   vvvvv  repeat
+    manager.set_key_down(*key, mods, false);
+  }
+  for nokey in nokeys.iter() {  //     vvvv repeat
+    manager.set_key_down(*nokey, mods, true);
+  }
+
+  for key in keys.iter() {
+    assert!(manager.has_key_down(key), "Key should be down (`has_key_down`)");
+  }
+  for nokey in nokeys.iter() {
+    assert!(!manager.has_key_down(nokey), "Key shouldn't be down (`has_key_down`)")
+  }
+
+  manager.update();
+
+  for key in keys.iter() {
+    assert!(!manager.has_key_down(key), "Key shouldn't be down after update (`has_key_down`)");
+  }
+}
+
+#[test]
+fn test_has_key_up() {
+  let (mut manager, keys, nokeys, mods) = get_keys();
+
+  for key in keys.iter() {
+    manager.set_key_up(*key, mods);
+  }
+
+  for key in keys.iter() {
+    assert!(manager.has_key_up(key), "Key should be up (`has_key_up`)");
+  }
+  for nokey in nokeys.iter() {
+    assert!(!manager.has_key_up(nokey), "Key shouldn't be up (`has_key_up`)")
+  }
+
+  manager.update();
+
+  for key in keys.iter() {
+    assert!(!manager.has_key_up(key), "Key shouldn't be up after update (`has_key_up`)");
+  }
+}
+
+#[test]
+fn test_is_key_pressed() {
+  let (mut manager, keys, nokeys, mods) = get_keys();
+
+  for key in keys.iter() {      //   vvvvv  repeat
+    manager.set_key_down(*key, mods, false);
+  }
+  for nokey in nokeys.iter() {  //     vvvv repeat
+    manager.set_key_down(*nokey, mods, true);
+  }
+
+  manager.update();
+
+  for key in keys.iter() {
+    assert!(manager.is_key_pressed(key), "Key should be pressed (`is_key_pressed`)");
+  }
+  for nokey in nokeys.iter() {
+    assert!(!manager.is_key_pressed(key), "Key shouldn't be pressed (`is_key_pressed`)");
+  }
+
+  for key in keys.iter() {
+    manager.set_key_up(*key, mods);
+  }
+
+  for key in keys.iter() {
+    assert!(!manager.is_key_pressed(key), "Key shouldn't be pressed after release (`is_key_pressed`)");
+  }
+}
+
+#[test]
 fn test_mouse_down() {
   let (mut manager, btns, nobtns) = get_mouse_btns();
 
@@ -131,6 +207,50 @@ fn test_mouse_up() {
   let btns_up = manager.mouse_up();
   for btn in btns.iter() {
     assert!(!btns_up.contains(btn), "Shouldn't contain button after update");
+  }
+}
+
+#[test]
+fn test_has_mouse_down() {
+  let (mut manager, btns, nobtns) = get_mouse_btns();
+
+  for btn in btns.iter() {
+    manager.set_mouse_down(btn.button, btn.point.x, btn.point.y);
+  }
+
+  for btn in btns.iter() {
+    assert!(manager.has_mouse_down(btn.button), "Mouse button should be down (`has_mouse_down`)");
+  }
+  for nobtn in nobtns.iter() {
+    assert!(!manager.has_mouse_down(nobtn.button), "Mouse button should not be down (`has_mouse_down`)"),
+  }
+
+  manager.update();
+
+  for btn in btns.iter() {
+    assert!(!manager.has_mouse_down(btn.button), "Mouse button should not be down after update (`has_mouse_down`)");
+  }
+}
+
+#[test]
+fn test_has_mouse_up() {
+  let (mut manager, btns, nobtns) = get_mouse_btns();
+
+  for btn in btns.iter() {
+    manager.set_mouse_up(btn.button, btn.point.x, btn.point.y);
+  }
+
+  for btn in btns.iter() {
+    assert!(manager.has_mouse_up(btn.button), "Mouse button should be down (`has_mouse_up`)");
+  }
+  for nobtn in nobtns.iter() {
+    assert!(!manager.has_mouse_up(nobtn.button), "Mouse button should not be down (`has_mouse_up`)"),
+  }
+
+  manager.update();
+
+  for btn in btns.iter() {
+    assert!(!manager.has_mouse_up(btn.button), "Mouse button should not be down after update (`has_mouse_up`)");
   }
 }
 
