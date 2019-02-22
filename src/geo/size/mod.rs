@@ -1,38 +1,30 @@
-use std::fmt::Debug;
-use std::cmp::PartialEq;
-
+use super::GNum;
 use super::Vector;
-use super::num_traits::*;
 
 #[derive(Debug, Clone)]
-pub struct Size<T>
-where T: Debug + Copy + Num + PartialEq + PartialOrd {
-  pub w: T,
-  pub h: T,
+pub struct Size {
+  pub w: GNum,
+  pub h: GNum,
 }
 
-impl<T> Size<T>
-where T: Debug + Copy + Num + PartialEq + PartialOrd {
-  pub fn new(w: T, h: T) -> Self {
+impl Size {
+  pub fn new(w: GNum, h: GNum) -> Self {
     Self { w, h }
   }
 
-  pub fn center(&self) -> Vector<T> {
-    let two = T::one() + T::one();
-    Vector::new(self.w / two, self.h / two)
+  pub fn center(&self) -> Vector {
+    Vector::new(self.w / GNum::from(2i8), self.h / GNum::from(2i8))
   }
 }
 
-impl<T> From<[T; 2]> for Size<T>
-where T: Debug + Copy + Num + PartialEq + PartialOrd {
-  fn from(arr: [T; 2]) -> Self {
+impl From<[GNum; 2]> for Size {
+  fn from(arr: [GNum; 2]) -> Self {
     Self::new(arr[0], arr[1])
   }
 }
 
-impl<T> From<(T, T)> for Size<T>
-where T: Debug + Copy + Num + PartialEq + PartialOrd {
-  fn from(tup: (T, T)) -> Self {
+impl From<(GNum, GNum)> for Size {
+  fn from(tup: (GNum, GNum)) -> Self {
     Self::new(tup.0, tup.1)
   }
 }

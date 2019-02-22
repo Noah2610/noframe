@@ -1,10 +1,8 @@
-use std::fmt::Debug;
-
 use ::geo::{
+  GNum,
   Vector,
   Point,
   Rect,
-  num_traits::*,
 };
 use super::{
   super::Entity,
@@ -43,11 +41,11 @@ pub enum Step {
 }
 
 impl Step {
-  pub fn vector<T>(&self) -> Vector<T>
-    where T: Debug + Copy + Num + PartialEq + PartialOrd + From<i8> {
+  pub fn vector(&self) -> Vector {
+    let zero = GNum::from(0i8);
     match self {
-      Step::X(pol) => Vector::new(pol.sign().into(), T::zero()),
-      Step::Y(pol) => Vector::new(T::zero(), pol.sign().into())
+      Step::X(pol) => Vector::new(pol.sign().into(), zero),
+      Step::Y(pol) => Vector::new(zero, pol.sign().into())
     }
   }
 }
@@ -60,17 +58,16 @@ impl Axis {
     iterate(Axis::Y);
   }
 
-  fn vector<T>(&self, value: T) -> Vector<T>
-  where T: Debug + Copy + Num + PartialEq + PartialOrd + Signed {
+  fn vector(&self, value: GNum) -> Vector {
+    let zero = GNum::from(0i8);
     match self {
-      Axis::X => Vector::new(value, T::zero()),
-      Axis::Y => Vector::new(T::zero(), value)
+      Axis::X => Vector::new(value, zero),
+      Axis::Y => Vector::new(zero, value)
     }
   }
 }
 
-pub trait Movement<T>: Entity<T> + Velocity<T>
-where T: Debug + Copy + Num + PartialEq + PartialOrd + Signed + Into<i32> {
+pub trait Movement: Entity + Velocity {
   /// Moves one pixel in one direction.
   fn step(&mut self, step: Step) {
     *self.point_mut() += step.vector();
@@ -91,27 +88,29 @@ where T: Debug + Copy + Num + PartialEq + PartialOrd + Signed + Into<i32> {
   /// which cannot be done because `self` has already been borrowed mutably by this method.
   /// For this situation there use the method `get_move_while`, which does not directly update the Entity's position,
   /// but rather it _returns the new position_ as a `Point`. Therefor it does not need a mutable reference to self.
-  fn move_while<C: Fn(&Rect<T>) -> bool>(&mut self, can_move_to: C) {
+  fn move_while<C: Fn(&Rect) -> bool>(&mut self, can_move_to: C) {
     let position = self.get_move_while(can_move_to);
     *self.point_mut() = position;
   }
 
   /// This method almost does exactly the same as `move_while`, except it doesn't update the Entity's position,
   /// but it _returns the new position_ instead. This means it does not need to use a mutable reference to `self`.
-  fn get_move_while<C: Fn(&Rect<T>) -> bool>(&self, can_move_to: C) -> Point<T> {
+  fn get_move_while<C: Fn(&Rect) -> bool>(&self, can_move_to: C) -> Point {
+    let zero = GNum::from(0i8);
+    let one  = GNum::from(1i8);
     let mut position = self.point().clone();
     Axis::for_each( |axis| {
       let vel = match axis {
         Axis::X => self.usable_velocity().x,
         Axis::Y => self.usable_velocity().y
       };
-      let abs  = vel.abs();
-      let sign = if vel != T::zero() {
+      let abs  = vel.abs() as usize;
+      let sign = if vel != zero {
         vel.signum()
-      } else { T::zero() };
-      let rem  = vel % T::one();
+      } else { zero };
+      let rem = vel % one;
       // Move by one absolute value at a time
-      for _i in 0_i32 ..= abs.into() {
+      for _ in 0_usize ..= abs {
         let new_position = position + axis.vector(sign);
         let new_rect = Rect::new(new_position.clone(), self.size().clone(), self.origin().clone());
         if can_move_to(&new_rect) {

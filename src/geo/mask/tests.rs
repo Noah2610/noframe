@@ -2,13 +2,13 @@ use super::super::prelude::*;
 
 #[derive(Debug)]
 struct Body {
-  point:  Point<NumType>,
-  size:   Size<NumType>,
+  point:  Point,
+  size:   Size,
   origin: Origin
 }
 
 impl Body {
-  pub fn new(x: NumType, y: NumType, w: NumType, h: NumType) -> Self {
+  pub fn new(x: GNum, y: GNum, w: GNum, h: GNum) -> Self {
     Self {
       point:  Point::new(x, y),
       size:   Size::new(w, h),
@@ -18,13 +18,13 @@ impl Body {
 }
 
 impl Mask for Body {
-  fn point(&self) -> &Point<NumType> {
+  fn point(&self) -> &Point {
     &self.point
   }
-  fn point_mut(&mut self) -> &mut Point<NumType> {
+  fn point_mut(&mut self) -> &mut Point {
     &mut self.point
   }
-  fn size(&self) -> &Size<NumType> {
+  fn size(&self) -> &Size {
     &self.size
   }
   fn origin(&self) -> &Origin {
