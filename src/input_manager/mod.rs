@@ -91,7 +91,7 @@ pub struct InputManager {
   keys_pressed:  Vec<KeyCode>,
   mouse_down:    Vec<MouseButtonData>,
   mouse_up:      Vec<MouseButtonData>,
-  mouse_pressed: Vec<MouseButtonData>,
+  mouse_pressed: Vec<MouseButton>,
   mouse_scroll:  i32,
   mouse_point:   Point,
   mouse_motion:  Vector,
@@ -131,6 +131,21 @@ impl InputManager {
     &self.keys_pressed
   }
 
+  /// Returns `true` if the user pressed down the `key` KeyCode in this frame.
+  pub fn has_key_down(&self, key: KeyCode) -> bool {
+    self.keys_down.iter().any( |&down| down == key )
+  }
+
+  /// Returns `true` if the user released the `key` KeyCode in this frame.
+  pub fn has_key_up(&self, key: KeyCode) -> bool {
+    self.keys_up.iter().any( |&up| up == key )
+  }
+
+  /// Returns `true` if the `key` KeyCode is currently pressed down.
+  pub fn is_key_pressed(&self, key: KeyCode) -> bool {
+    self.keys_pressed.iter().any( |&pressed| pressed == key )
+  }
+
   /// Returns a reference to a `Vec` containing all mouse buttons (including their position in the window)
   /// which were pushed _down_ in this frame.
   pub fn mouse_down(&self) -> &Vec<MouseButtonData> {
@@ -145,8 +160,23 @@ impl InputManager {
 
   /// Returns a reference to a `Vec` containing all mouse buttons (including their position in the window)
   /// which are currently being _pressed_ down (aka were pushed down but haven't been released yet).
-  pub fn mouse_pressed(&self) -> &Vec<MouseButtonData> {
+  pub fn mouse_pressed(&self) -> &Vec<MouseButton> {
     &self.mouse_pressed
+  }
+
+  /// Returns `true` if the user pressed down the `button` MouseButton in this frame.
+  pub fn has_mouse_down(&self, button: MouseButton) -> bool {
+    self.mouse_down.iter().any( |down| down.button == button )
+  }
+
+  /// Returns `true` if the user released the `button` MouseButton in this frame.
+  pub fn has_mouse_up(&self, button: MouseButton) -> bool {
+    self.mouse_up.iter().any( |up| up.button == button )
+  }
+
+  /// Returns `true` if the `button` MouseButton is currently pressed down.
+  pub fn is_mouse_pressed(&self, button: MouseButton) -> bool {
+    self.mouse_pressed.iter().any( |&pressed| pressed == button )
   }
 
   /// Returns an `i32` representing the direction (and "distance")
@@ -197,8 +227,8 @@ impl InputManager {
   /// Call this method from your ggez MainState's `mouse_button_down_event` method.
   pub fn set_mouse_down(&mut self, mouse_button: MouseButton, x: f32, y: f32) {
     let data = MouseButtonData::new(mouse_button, x, y);
-    if !self.mouse_pressed.iter().any( |&d| d.button == mouse_button ) {
-      self.mouse_pressed.push(data);
+    if !self.mouse_pressed.iter().any( |&d| d == mouse_button ) {
+      self.mouse_pressed.push(mouse_button);
     }
     self.mouse_down.push(data);
   }
@@ -206,7 +236,7 @@ impl InputManager {
   /// Call this method from your ggez MainState's `mouse_button_up_event` method.
   pub fn set_mouse_up(&mut self, mouse_button: MouseButton, x: f32, y: f32) {
     let data = MouseButtonData::new(mouse_button, x, y);
-    let index = self.mouse_pressed.iter().position( |&d| d.button == mouse_button );
+    let index = self.mouse_pressed.iter().position( |&d| d == mouse_button );
     if let Some(i) = index {
       self.mouse_pressed.remove(i);
     }
