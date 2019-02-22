@@ -8,7 +8,7 @@ use crate::geo::{ GNum, Vector, Point };
 
 /// This struct is used by `InputManager` for mouse buttons.
 /// It groups the ggez `MouseButton` enum together with the mouse's position `Point`.
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq)]
 pub struct MouseButtonData {
   pub button: MouseButton,
   pub point:  Point,
@@ -234,3 +234,6 @@ impl InputManager {
     self.mouse_motion = Vector::new(GNum::from(0i8), GNum::from(0i8));
   }
 }
+
+#[cfg(test)]
+mod tests;
