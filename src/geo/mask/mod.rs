@@ -1,4 +1,7 @@
-pub mod misc;
+pub mod origin;
+mod sides;
+
+pub use self::origin::Origin;
 
 use super::{
   GNum,
@@ -7,7 +10,7 @@ use super::{
   Size,
 };
 
-use self::misc::{ *, Side::* };
+use self::sides::{ *, Side::* };
 
 pub trait Mask {
   fn point(&self)         -> &Point;

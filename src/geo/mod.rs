@@ -22,7 +22,7 @@ pub mod prelude {
 
 pub use self::size::Size;
 pub use self::mask::Mask;
-pub use self::mask::misc::Origin;
+pub use self::mask::Origin;
 pub use self::rect::Rect;
 pub use self::base_vector_point::BaseVectorPoint;
 pub use self::invert::Invert;
