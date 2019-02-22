@@ -163,10 +163,15 @@ fn test_mouse_motion() {
     [ 60.0, 80.0, 0.2, 4.9 ],
   ];
 
-  for data in positions {
+  for data in positions.iter() {
     manager.set_mouse_motion(data[0], data[1], data[2], data[3]);
-    assert_eq!(&Point::new(data[0], data[1]),  manager.mouse_point(),  "Mouse should be in correct position");
+    assert_eq!(&Point::new( data[0], data[1]), manager.mouse_point(),  "Mouse should be in correct position");
     assert_eq!(&Vector::new(data[2], data[3]), manager.mouse_motion(), "Mouse's relative motion should be correct");
     manager.update();
   }
+
+  manager.update();
+  let last = positions.last().unwrap();
+  assert_eq!(&Point::new(last[0], last[1]), manager.mouse_point(),  "Last mouse point should be preserved between updates");
+  assert_eq!(&Vector::new(0.0, 0.0),        manager.mouse_motion(), "Mouse motion should be reset between updates");
 }
