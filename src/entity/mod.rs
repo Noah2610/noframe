@@ -10,15 +10,15 @@ pub mod prelude {
 pub use self::traits::velocity::Velocity;
 pub use self::traits::movement::Movement;
 
-use ::ggez::{
+use ggez::{
   Context,
   GameResult,
   graphics::{ self, Mesh, DrawMode, DrawParam },
 };
 
-use ::settings::entity::*;
-use ::color::Color;
-use ::geo::{
+use crate::settings::entity::*;
+use crate::color::Color;
+use crate::geo::{
   Vector,
   Mask,
 };

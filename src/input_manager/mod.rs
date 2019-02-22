@@ -1,4 +1,4 @@
-use ::ggez::event::{
+use ggez::event::{
   KeyCode,
   MouseButton,
   KeyMods,

@@ -1,9 +1,9 @@
-use ::ggez::{
+use ggez::{
   GameResult,
   Context
 };
 
-use ::geo::{
+use crate::geo::{
   GNum,
   Vector,
   Point,
@@ -13,7 +13,7 @@ use ::geo::{
   Invert,
   conversions::*,
 };
-use ::entity::Entity;
+use crate::entity::Entity;
 
 pub struct Camera {
   point:  Point,

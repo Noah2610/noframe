@@ -1,4 +1,4 @@
-use ::geo::{
+use crate::geo::{
   GNum,
   Vector,
   Point,
