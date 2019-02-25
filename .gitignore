@@ -1,3 +1,4 @@
 /target
+/noframe_derive/target
 **/*.rs.bk
 Cargo.lock

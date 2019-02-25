@@ -8,5 +8,6 @@ repository = "https://github.com/Noah2610/noframe"
 readme = "README.md"
 
 [dependencies]
+noframe_derive = { path = "./noframe_derive" }
 nalgebra = "0.17"
 ggez = { git = "https://github.com/ggez/ggez" }
