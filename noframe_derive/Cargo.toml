@@ -4,5 +4,12 @@ version = "0.1.0"
 authors = ["Noah Rosenzweig <rosenzweig.noah@gmail.com>"]
 edition = "2018"
 
-[dependencies]
+[lib]
+proc-macro = true
 
+[dependencies]
+syn = "0.15.27"
+quote = "0.6.11"
+
+[dev-dependencies]
+noframe = { path = ".." }

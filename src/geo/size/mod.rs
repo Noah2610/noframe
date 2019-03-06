@@ -1,7 +1,7 @@
 use super::GNum;
 use super::Vector;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Size {
   pub w: GNum,
   pub h: GNum,
